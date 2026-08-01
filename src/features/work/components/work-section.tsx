@@ -38,7 +38,7 @@ export function WorkSection() {
   const openProject = projects.find((project) => project.slug === openSlug) ?? null;
 
   return (
-    <Section id="work" labelledBy="work-heading" className="border-t border-border">
+    <Section id="work" labelledBy="work-heading" className="border-border border-t">
       <Reveal>
         <SectionHeading
           id="work-heading"
@@ -52,11 +52,7 @@ export function WorkSection() {
       <Stagger className="mt-12 grid gap-5 sm:grid-cols-2">
         {projects.map((project, index) => (
           <StaggerItem key={project.slug} className="h-full">
-            <ProjectCard
-              project={project}
-              index={index}
-              onOpen={() => setOpenSlug(project.slug)}
-            />
+            <ProjectCard project={project} index={index} onOpen={() => setOpenSlug(project.slug)} />
           </StaggerItem>
         ))}
       </Stagger>

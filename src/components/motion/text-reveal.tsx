@@ -54,6 +54,7 @@ export function TextReveal({
             className="inline-flex overflow-hidden pb-[0.12em] align-bottom"
           >
             <m.span
+              data-motion-reveal=""
               className="inline-block will-change-transform"
               initial={{ y: '110%' }}
               animate={{ y: 0 }}

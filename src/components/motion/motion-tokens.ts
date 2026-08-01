@@ -98,10 +98,16 @@ export function staggerContainer(step: number = stagger.base, delay = 0): Varian
  * duration. Primitives swap to this rather than skipping the animation
  * wholesale, so the element still appears (and `whileInView` bookkeeping
  * still works) without any movement.
+ *
+ * Both states explicitly reset `x`/`y`. The preference is only known after
+ * hydration, so an element may already be mounted holding the animated
+ * `hidden` transform when these variants are swapped in; Motion only writes
+ * the properties named in the target, so omitting them would leave a stray
+ * `translateY` behind.
  */
 export const staticVariants: Variants = {
-  hidden: { opacity: 1 },
-  visible: { opacity: 1, transition: { duration: 0 } },
+  hidden: { opacity: 1, x: 0, y: 0 },
+  visible: { opacity: 1, x: 0, y: 0, transition: { duration: 0 } },
 };
 
 /**

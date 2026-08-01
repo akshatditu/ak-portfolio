@@ -355,12 +355,28 @@
  * =============================================================================
  * REDUCED MOTION
  * =============================================================================
- * The JS animation primitives check `usePrefersReducedMotion` and skip
- * animating entirely. This block is the safety net for anything CSS-driven.
+ * The JS animation primitives check `usePrefersReducedMotion` too, but this
+ * block — not the JS — is what actually guarantees content is visible.
+ *
+ * Why it has to be CSS: the server cannot know the motion preference, so it
+ * renders the reveal primitives in their `hidden` state (`opacity: 0`) and
+ * relies on the client to animate them in. A reduced-motion user never gets
+ * that animation, and the preference is only readable after hydration — by
+ * which point Motion has already mounted the element and will not re-drive it
+ * from a prop change. The content stays invisible forever.
+ *
+ * CSS has no such ordering problem: the browser knows the preference at first
+ * paint. `!important` here beats the inline style Motion writes, which is the
+ * entire point.
  */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  [data-motion-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
   }
 
   *,

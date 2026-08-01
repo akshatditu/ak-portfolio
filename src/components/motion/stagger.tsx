@@ -25,6 +25,11 @@ export interface StaggerProps {
  *
  * The parent only orchestrates timing — it has no visual variant of its own,
  * so it never fades a whole section in as a block.
+ *
+ * Like `Reveal`, every path supplies an `animate`/`whileInView` target so a
+ * reduced-motion preference discovered after hydration can still drive the
+ * already-mounted children out of their `hidden` state. See the note in
+ * `reveal.tsx`.
  */
 export function Stagger({
   children,
@@ -36,23 +41,21 @@ export function Stagger({
   const reducedMotion = usePrefersReducedMotion();
   const MotionTag = m[as as keyof typeof m] as typeof m.div;
 
-  if (reducedMotion) {
-    return (
-      <MotionTag className={className} initial="visible" variants={staticVariants}>
-        {children}
-      </MotionTag>
-    );
-  }
+  const animationProps = reducedMotion
+    ? { initial: 'hidden' as const, animate: 'visible' as const }
+    : { initial: 'hidden' as const, whileInView: 'visible' as const, viewport: viewportOnce };
 
   return (
     <MotionTag
+      data-motion-reveal=""
       className={className}
-      initial="hidden"
-      whileInView="visible"
-      viewport={viewportOnce}
+      {...animationProps}
       variants={{
         hidden: {},
-        visible: { transition: { staggerChildren: step, delayChildren: delay } },
+        // No stagger under reduced motion: the children arrive together.
+        visible: reducedMotion
+          ? { transition: { staggerChildren: 0, delayChildren: 0 } }
+          : { transition: { staggerChildren: step, delayChildren: delay } },
       }}
     >
       {children}
@@ -80,21 +83,18 @@ export function StaggerItem({
   const reducedMotion = usePrefersReducedMotion();
   const MotionTag = m[as as keyof typeof m] as typeof m.div;
 
-  if (reducedMotion) {
-    return (
-      <MotionTag className={className} variants={staticVariants}>
-        {children}
-      </MotionTag>
-    );
-  }
-
   return (
     <MotionTag
+      data-motion-reveal=""
       className={className}
-      variants={{
-        hidden: { opacity: 0, y: offset },
-        visible: { opacity: 1, y: 0, transition: transitions.base },
-      }}
+      variants={
+        reducedMotion
+          ? staticVariants
+          : {
+              hidden: { opacity: 0, y: offset },
+              visible: { opacity: 1, y: 0, transition: transitions.base },
+            }
+      }
     >
       {children}
     </MotionTag>
