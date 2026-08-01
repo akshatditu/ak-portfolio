@@ -51,6 +51,35 @@ export const metadata: Metadata = {
     'India',
   ],
   alternates: { canonical: '/' },
+
+  /**
+   * Declared explicitly rather than left to Next's fallbacks.
+   *
+   * Next derives `og:title`, `og:description` and (via the `opengraph-image`
+   * file convention) `og:image` on its own, but it never emits `og:url`,
+   * `og:type`, `og:site_name` or `og:locale`. Those are exactly the fields
+   * LinkedIn and Slack use to label and attribute a shared link, which for a
+   * portfolio is the single highest-traffic first impression.
+   */
+  openGraph: {
+    type: 'profile',
+    firstName: 'Akshat',
+    lastName: 'Gupta',
+    url: siteConfig.url,
+    siteName: siteConfig.name,
+    title: `${siteConfig.name} — ${siteConfig.role}`,
+    description: siteConfig.description,
+    locale: siteConfig.locale,
+  },
+
+  // No `creator`/`site` handle: the X account in `site.ts` is still a
+  // placeholder, and guessing one credits the card to whoever owns that handle.
+  twitter: {
+    card: 'summary_large_image',
+    title: `${siteConfig.name} — ${siteConfig.role}`,
+    description: siteConfig.description,
+  },
+
   robots: {
     index: true,
     follow: true,

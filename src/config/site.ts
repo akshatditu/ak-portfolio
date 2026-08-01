@@ -26,16 +26,30 @@ export interface SocialLink {
 }
 
 /**
- * Resolution order matters. Vercel injects VERCEL_PROJECT_PRODUCTION_URL, but
- * we prefer an explicit env var so preview deploys still emit canonical URLs
- * pointing at production rather than at the preview hostname.
+ * The live origin, including `www` — that is the host the domain actually
+ * serves, and a canonical URL has to match it exactly or it points somewhere
+ * that redirects.
+ *
+ * It lives in code rather than only in an env var on purpose: a deploy that
+ * forgets to set `NEXT_PUBLIC_SITE_URL` would otherwise silently fall back to
+ * the generated `*.vercel.app` hostname, and every canonical, OG image and
+ * sitemap entry would name the wrong site. Wrong-but-plausible URLs are the
+ * hardest SEO bug to notice.
+ */
+export const PRODUCTION_URL = 'https://www.akshatguptadev.in';
+
+/**
+ * Resolution order: an explicit env var wins (so a staging host can override
+ * it), then the real domain for any production build — including Vercel
+ * previews, which should point their canonicals at production rather than at
+ * their own throwaway hostname — then localhost for `next dev`.
  */
 function resolveSiteUrl(): string {
   if (process.env.NEXT_PUBLIC_SITE_URL) {
     return process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, '');
   }
-  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
-    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  if (process.env.NODE_ENV === 'production') {
+    return PRODUCTION_URL;
   }
   return 'http://localhost:3000';
 }

@@ -3,6 +3,8 @@
 Single-page portfolio for **Akshat Gupta** — Senior Frontend Engineer & Technical Lead.
 Built with Next.js 16 (App Router), React 19, TypeScript 5.9 and Tailwind CSS v4.
 
+**Live: <https://www.akshatguptadev.in>**
+
 The site is one scrollable page. Every nav item smooth-scrolls to a section; project case
 studies open in dialogs; there are no secondary routes beyond the metadata handlers
 (sitemap, robots, manifest, OG image, favicon).
@@ -20,12 +22,15 @@ npm run verify     # typecheck + lint + production build
 
 ## Environment
 
-Copy `.env.example` → `.env.local`. The single variable is optional — the site builds and
-runs with none set:
+There are **no required environment variables**. The site builds and runs with none set.
 
 | Variable | Without it |
 |---|---|
-| `NEXT_PUBLIC_SITE_URL` | Falls back to the Vercel production URL, then localhost |
+| `NEXT_PUBLIC_SITE_URL` | Production builds use `PRODUCTION_URL` (`https://www.akshatguptadev.in`) from `src/config/site.ts`; `next dev` uses `http://localhost:3000` |
+
+Set it only to point a build at a different origin, such as a staging host. The domain is
+hardcoded rather than env-only so a deploy that forgets the variable still emits correct
+canonical, OG and sitemap URLs instead of a `*.vercel.app` hostname.
 
 There is no contact form by design — the Contact section is a `mailto:` link, so nothing
 needs a backend or an email API key.
@@ -77,14 +82,22 @@ src/
 - **TypeScript pinned to 5.9** (not the TS 7 Go-native compiler) until the lint/framework
   ecosystem settles. Revisit deliberately.
 
-## Deployment (Vercel)
+## Deployment
 
-1. Push to GitHub and import the repo in Vercel — zero config needed.
-2. Set `NEXT_PUBLIC_SITE_URL` to the production domain (canonical URLs, OG, sitemap).
+Deployed on Vercel at <https://www.akshatguptadev.in>. Push to `main` and Vercel builds it —
+no environment variables to configure.
 
-## Before going live — replacement checklist
+If the domain ever changes, change `PRODUCTION_URL` in `src/config/site.ts`. That one
+constant feeds the canonical URL, OpenGraph and Twitter tags, `metadataBase`, the sitemap
+and `robots.txt`, so nothing can disagree with anything else.
 
-- [ ] `NEXT_PUBLIC_SITE_URL` — production domain.
+**Serve the site on `www`.** `PRODUCTION_URL` includes it, and a canonical URL that doesn't
+match the host actually served points at a redirect. If you move to the apex domain, update
+the constant to match.
+
+## Still open
+
 - [ ] `src/config/site.ts` — X / LeetCode / Medium links are `placeholder: true` and hidden
-      site-wide; fill in a URL and delete the flag to surface one.
+      site-wide; fill in a URL and delete the flag to surface one. (The Twitter card's
+      `creator` field in `src/lib/seo.ts` is deliberately omitted until the X handle is real.)
 - [ ] `public/akshat.jpg` — swap if the headshot changes (hero expects portrait ~3:4).
