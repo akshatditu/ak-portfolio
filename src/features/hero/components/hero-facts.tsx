@@ -19,7 +19,7 @@ export function HeroFacts({ years, companies }: { years: number; companies: numb
 
   return (
     <Reveal immediate delay={1} className="w-full">
-      <dl className="mt-4 grid w-full grid-cols-2 gap-x-6 gap-y-8 border-t border-border pt-8 sm:mt-8 lg:grid-cols-4">
+      <dl className="mt-1 grid w-full grid-cols-2 gap-x-6 gap-y-6 border-t border-border pt-6 sm:mt-8 sm:gap-y-8 sm:pt-8 lg:grid-cols-4">
         <Fact label="Experience">
           <CountUp value={years} suffix="+" /> years
         </Fact>

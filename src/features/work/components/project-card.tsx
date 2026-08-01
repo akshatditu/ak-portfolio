@@ -1,6 +1,7 @@
 'use client';
 
 import { ArrowUpRight, ExternalLink, Lock } from 'lucide-react';
+import Image from 'next/image';
 import { GithubIcon } from '@/components/icons';
 import { Badge } from '@/components/ui/badge';
 import type { Project } from '@/types/content';
@@ -12,10 +13,14 @@ import { cn } from '@/lib/utils';
  * The whole card is a button that opens the detail dialog; the GitHub / live
  * links sit on top of it and stop propagation so they stay directly clickable.
  *
- * No screenshot: three of the four projects are internal enterprise tooling
- * that cannot be shown, and a mockup pretending otherwise would be worse than
- * nothing. The accent bar gives each card an identity without implying an
- * image exists.
+ * Only a project with a public URL gets a screenshot. The three internal
+ * enterprise products cannot be shown, and a mockup standing in for them would
+ * be worse than nothing — so they lean on the accent bar for identity instead.
+ * That asymmetry is intentional, not an unfinished state.
+ *
+ * Everything inside the `<button>` is a `<span>` (or an `<img>`): a button may
+ * only contain phrasing content, so a stray `<div>` or `<p>` here is invalid
+ * HTML and browsers recover from it inconsistently.
  */
 export function ProjectCard({
   project,
@@ -49,6 +54,26 @@ export function ProjectCard({
           className="h-1 w-full shrink-0"
           style={{ background: `linear-gradient(90deg, ${from}, ${to})` }}
         />
+
+        {/* 2:1 rather than 16:9 — the screenshot is naturally 1.89:1, so this
+            trims only a sliver off the bottom while keeping this card closer in
+            height to the three that have no image to show. */}
+        {project.image && (
+          <span className="relative block aspect-2/1 w-full shrink-0 overflow-hidden border-b border-border bg-surface-raised">
+            <Image
+              src={project.image.src}
+              alt={project.image.alt}
+              width={project.image.width}
+              height={project.image.height}
+              sizes="(min-width: 1024px) 34rem, (min-width: 640px) 45vw, 92vw"
+              className={cn(
+                'h-full w-full object-cover object-top',
+                'transition-transform duration-500 ease-(--ease-out-quart) group-hover:scale-[1.03]',
+                'motion-reduce:transition-none motion-reduce:group-hover:scale-100',
+              )}
+            />
+          </span>
+        )}
 
         <span className="flex flex-1 flex-col gap-3 p-5 sm:p-6">
           <span className="flex items-center gap-2.5">

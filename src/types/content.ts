@@ -155,6 +155,23 @@ export interface Project {
   };
 
   /**
+   * A real screenshot of the running product.
+   *
+   * Only ever set for a project with a public URL, where the image is the
+   * actual UI anyone can go and look at. The internal projects have no
+   * shareable interface, and a generic mockup in that slot would imply a
+   * product screenshot that does not exist — the same reason there are no
+   * invented metrics or testimonials anywhere in this model.
+   */
+  image?: {
+    src: string;
+    alt: string;
+    /** Intrinsic dimensions, so `next/image` reserves space and never shifts layout. */
+    width: number;
+    height: number;
+  };
+
+  /**
    * Internal enterprise products cannot be linked or screenshotted. Saying so
    * explicitly is more credible than a dead "Live Demo" button.
    */

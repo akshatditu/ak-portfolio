@@ -48,6 +48,15 @@ export const projects: Project[] = [
       live: 'https://www.budgetiq.in/',
     },
 
+    // The only project with a screenshot, because it is the only one with a
+    // public URL — this is the page at budgetiq.in, not a mockup of it.
+    image: {
+      src: '/budgetiq.png',
+      alt: 'The BudgetIQ landing page: a monthly budget summary with spend progress and an expense breakdown by category.',
+      width: 2000,
+      height: 1057,
+    },
+
     techStack: [
       {
         category: 'Backend',
