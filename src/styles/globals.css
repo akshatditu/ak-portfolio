@@ -1,0 +1,473 @@
+@import 'tailwindcss';
+
+/*
+ * =============================================================================
+ * DESIGN TOKENS
+ * =============================================================================
+ * Tailwind v4 is CSS-first: there is no tailwind.config.js. This file IS the
+ * design system.
+ *
+ * ONE THEME, derived from the headshot: deep navy (the blazer) for the hero,
+ * nav and footer; soft off-white with charcoal text for content; warm amber as
+ * the single accent, used sparingly. There is deliberately no light/dark
+ * toggle — the palette was chosen to make the photograph look native to the
+ * page, and a second theme would break that.
+ *
+ * Two layers:
+ *   1. `:root`        — the base (light) palette as CSS custom properties.
+ *   2. `.theme-navy`  — a SCOPE, not a mode. Wrapping a section in it remaps
+ *                       the same variable names to their on-navy values, so
+ *                       every token-based utility (`bg-background`,
+ *                       `text-foreground-muted`, `border-border`) just works
+ *                       inside dark sections with no component changes.
+ *
+ * RULE: no component may hardcode a colour, radius, duration or easing. If a
+ * value is missing here, add it here.
+ * =============================================================================
+ */
+
+:root {
+  /* --- Surfaces ---------------------------------------------------------- */
+  /* Soft off-white, echoing the grey studio backdrop of the photo. Pure white
+     against navy is harsh; this keeps it soft. */
+  --background: #f7f8fa;
+  --background-subtle: #eff1f5;
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+
+  --foreground: #22272e;
+  --foreground-muted: #5a6472;
+  --foreground-subtle: #7d8798;
+
+  --border: #d8dce2;
+  --border-strong: #c2c8d2;
+
+  /* --- Brand navy -------------------------------------------------------- */
+  /* Exposed directly for the few places that need navy on a light section
+     (wordmark tile, diagram strokes). Sections that are *entirely* navy use
+     the `.theme-navy` scope instead. */
+  --navy: #1b2a4a;
+  --navy-deep: #16233e;
+
+  /* --- Accent ------------------------------------------------------------ */
+  /* Warm amber — the one accent. CTAs, link hovers, small underlines. Restraint
+     is the design: one accent used sparingly reads as intentional. */
+  --accent: #e8a13d;
+  --accent-foreground: #1b2a4a;
+  --accent-muted: rgb(232 161 61 / 0.16);
+  --accent-secondary: #d18a2a;
+  --accent-tertiary: #b77524;
+
+  /* --- Feedback ---------------------------------------------------------- */
+  --success: #2e7d4f;
+  --warning: #a56a0b;
+  --danger: #c23934;
+
+  /* --- Glass ------------------------------------------------------------- */
+  --glass-bg: rgb(255 255 255 / 0.72);
+  --glass-border: rgb(27 42 74 / 0.08);
+
+  /* --- Focus ------------------------------------------------------------- */
+  /* Navy, not amber: amber on off-white is ~1.9:1 and fails as a focus
+     indicator. The navy scope overrides this back to amber, where it pops. */
+  --ring: #1b2a4a;
+}
+
+/*
+ * The navy scope. Hero, header and footer wrap in `.theme-navy`; everything
+ * inside gets on-navy values for the SAME variable names.
+ */
+.theme-navy {
+  --background: #1b2a4a;
+  --background-subtle: #16233e;
+  --surface: #223456;
+  --surface-raised: #2a3d63;
+
+  --foreground: #f2f4f8;
+  --foreground-muted: #b9c2d4;
+  --foreground-subtle: #8d99b1;
+
+  --border: rgb(255 255 255 / 0.12);
+  --border-strong: rgb(255 255 255 / 0.22);
+
+  --accent-muted: rgb(232 161 61 / 0.18);
+
+  --glass-bg: rgb(27 42 74 / 0.65);
+  --glass-border: rgb(255 255 255 / 0.1);
+
+  --ring: #e8a13d;
+
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+@theme inline {
+  /* --- Colour namespace -------------------------------------------------- */
+  --color-background: var(--background);
+  --color-background-subtle: var(--background-subtle);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+
+  --color-foreground: var(--foreground);
+  --color-foreground-muted: var(--foreground-muted);
+  --color-foreground-subtle: var(--foreground-subtle);
+
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+
+  --color-navy: var(--navy);
+  --color-navy-deep: var(--navy-deep);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-muted: var(--accent-muted);
+  --color-accent-secondary: var(--accent-secondary);
+  --color-accent-tertiary: var(--accent-tertiary);
+
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+
+  --color-glass: var(--glass-bg);
+  --color-glass-border: var(--glass-border);
+  --color-ring: var(--ring);
+
+  /* --- Typography -------------------------------------------------------- */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, 'SF Mono', Menlo, monospace;
+  --font-display: var(--font-instrument-serif), Georgia, 'Times New Roman', serif;
+
+  /* Fluid scale. Every size is a clamp() so there is exactly ONE type ramp
+     across all breakpoints — no `text-4xl md:text-6xl` chains. */
+  --text-display: clamp(2.6rem, 1.4rem + 5.2vw, 5.5rem);
+  --text-display--line-height: 0.98;
+  --text-display--letter-spacing: -0.035em;
+
+  --text-h1: clamp(2rem, 1.3rem + 3vw, 3.4rem);
+  --text-h1--line-height: 1.08;
+  --text-h1--letter-spacing: -0.028em;
+
+  --text-h2: clamp(1.75rem, 1.25rem + 2.1vw, 2.75rem);
+  --text-h2--line-height: 1.12;
+  --text-h2--letter-spacing: -0.025em;
+
+  --text-h3: clamp(1.2rem, 1.05rem + 0.7vw, 1.55rem);
+  --text-h3--line-height: 1.25;
+  --text-h3--letter-spacing: -0.015em;
+
+  --text-lead: clamp(1.02rem, 0.96rem + 0.35vw, 1.22rem);
+  --text-lead--line-height: 1.6;
+
+  --text-body: 1rem;
+  --text-body--line-height: 1.7;
+
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.6;
+
+  --text-micro: 0.75rem;
+  --text-micro--line-height: 1.5;
+  --text-micro--letter-spacing: 0.08em;
+
+  /* --- Spacing rhythm ---------------------------------------------------- */
+  --spacing-section: clamp(4.5rem, 2.5rem + 7vw, 9rem);
+  --spacing-gutter: clamp(1.25rem, 0.75rem + 2vw, 2.5rem);
+  --container-content: 72rem;
+  --container-prose: 44rem;
+
+  /* --- Radii ------------------------------------------------------------- */
+  --radius-card: 1rem;
+  --radius-panel: 1.5rem;
+
+  /* --- Motion ------------------------------------------------------------ */
+  /* Shared across CSS and the Motion primitives in components/motion so a
+     CSS hover and a JS reveal feel like the same physical system. */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --animate-shimmer: shimmer 2.5s linear infinite;
+  --animate-pulse-ring: pulse-ring 2.4s var(--ease-out-quart) infinite;
+  --animate-aurora: aurora 24s ease-in-out infinite;
+
+  /* Radix Accordion. The height comes from `--radix-accordion-content-height`,
+     which Radix measures and sets — so we animate to a real pixel value
+     instead of the `height: auto` CSS cannot transition to. */
+  --animate-accordion-down: accordion-down 0.32s var(--ease-out-quart);
+  --animate-accordion-up: accordion-up 0.26s var(--ease-out-quart);
+}
+
+@keyframes accordion-down {
+  from {
+    height: 0;
+    opacity: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+    opacity: 1;
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+    opacity: 1;
+  }
+  to {
+    height: 0;
+    opacity: 0;
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(2.2);
+  }
+}
+
+@keyframes aurora {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(3%, -4%, 0) scale(1.08);
+  }
+  66% {
+    transform: translate3d(-3%, 3%, 0) scale(0.95);
+  }
+}
+
+/*
+ * =============================================================================
+ * BASE
+ * =============================================================================
+ */
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    border-color: var(--border);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    /* Offset for the fixed header so anchor links don't land under it. */
+    scroll-padding-top: 6rem;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-synthesis-weight: none;
+    /* Belt and braces against the #1 mobile bug: a stray wide child creating
+       a horizontal scrollbar. Wide elements opt into their own
+       `overflow-x: auto` container instead. */
+    overflow-x: clip;
+  }
+
+  /* A single, consistent focus ring everywhere. Never remove it —
+     `:focus-visible` already hides it from mouse users. */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* Sections receive programmatic focus after anchor navigation so the next
+     Tab continues from the section rather than from the nav. They must not
+     paint a focus ring for that. Genuine keyboard focus on interactive
+     children is unaffected. */
+  section[tabindex='-1']:focus,
+  main[tabindex='-1']:focus {
+    outline: none;
+  }
+
+  ::selection {
+    background-color: var(--accent-muted);
+    color: var(--foreground);
+  }
+
+  /* Tabular figures for every metric — numbers that jump width while
+     animating look broken. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Thin scrollbars that match the theme. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--border-strong);
+    border-radius: 9999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+}
+
+/*
+ * =============================================================================
+ * REDUCED MOTION
+ * =============================================================================
+ * The JS animation primitives check `usePrefersReducedMotion` and skip
+ * animating entirely. This block is the safety net for anything CSS-driven.
+ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/*
+ * =============================================================================
+ * UTILITIES
+ * =============================================================================
+ */
+
+/* Amber sweep inside otherwise-neutral text. Used on the hero role line,
+   where the surrounding text is near-white on navy. */
+@utility text-gradient {
+  background-image: linear-gradient(
+    100deg,
+    var(--foreground) 0%,
+    var(--foreground) 35%,
+    var(--accent) 60%,
+    var(--accent-secondary) 80%,
+    var(--foreground) 100%
+  );
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+@utility glass {
+  background-color: var(--glass-bg);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid var(--glass-border);
+}
+
+@utility grid-lines {
+  background-image:
+    linear-gradient(to right, var(--border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+  background-size: 4rem 4rem;
+}
+
+@utility mask-fade-y {
+  mask-image: linear-gradient(to bottom, transparent, black 12%, black 88%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 12%, black 88%, transparent);
+}
+
+/* Visible only to screen readers, but focusable — used by the skip link. */
+@utility sr-only-focusable {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/*
+ * =============================================================================
+ * PRINT  (drives the résumé section)
+ * =============================================================================
+ */
+@media print {
+  :root,
+  .theme-navy {
+    --background: #fff;
+    --foreground: #000;
+    --foreground-muted: #333;
+    --border: #ccc;
+    --accent: #1a1a1a;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  [data-print-hide],
+  header,
+  footer,
+  nav {
+    display: none !important;
+  }
+
+  a[href^='http']::after {
+    content: ' (' attr(href) ')';
+    font-size: 0.7em;
+    color: #555;
+    word-break: break-all;
+  }
+
+  .print-break-inside-avoid {
+    break-inside: avoid;
+  }
+
+  @page {
+    margin: 14mm;
+  }
+}
